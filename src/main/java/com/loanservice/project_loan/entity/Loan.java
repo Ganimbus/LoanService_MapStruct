@@ -1,10 +1,8 @@
 package com.loanservice.project_loan.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -32,15 +30,19 @@ public class Loan {
     @Column(name = "INSTALMENT")
     private int instalment;
 
+    @Positive(message = "Amount must be greater than 0")
     @Column(name = "AMOUNT")
     private BigDecimal amount;
+
 
     @Column(name = "INTEREST_RATE")
     private BigDecimal interestRate;
 
+    @Pattern(regexp = "^(simple|compound)$", message = "Interest type must be simple or compound")
     @Column(name = "INTEREST_TYPE")
     private String interestType;
 
+    @Pattern(regexp = "^(mensual|trimestral|semestral)$", message = "Frequency must be monthly or quarterly or semiannual")
     @Column(name = "FREQUENCY")
     private String frequency;
 
