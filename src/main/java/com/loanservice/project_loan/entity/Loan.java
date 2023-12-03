@@ -27,6 +27,9 @@ public class Loan {
     @JoinColumn(name = "APPLICATION_ID")
     private Application application;
 
+    //from 3 to 24 for personal loans and from 6 to 72 for buisness loans
+    @Min(value = 3, message = "Instalment must be greater than 2")
+    @Max(value = 72, message = "Instalment must be less than 73")
     @Column(name = "INSTALMENT")
     private int instalment;
 
@@ -42,7 +45,7 @@ public class Loan {
     @Column(name = "INTEREST_TYPE")
     private String interestType;
 
-    @Pattern(regexp = "^(mensual|trimestral|semestral)$", message = "Frequency must be monthly or quarterly or semiannual")
+    @Pattern(regexp = "^(mensual|trimestral)$", message = "Frequency must be monthly or quarterly")
     @Column(name = "FREQUENCY")
     private String frequency;
 
