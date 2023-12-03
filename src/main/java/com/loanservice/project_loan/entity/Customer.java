@@ -23,9 +23,11 @@ public class Customer {
     @Column(name = "DNI", unique = true)
     private String dni;
 
+    //@NotBlank(message = "Name is mandatory")
     @Column(name = "NAME")
     private String name;
 
+    //@NotBlank(message = "Lastname is mandatory")
     @Column(name = "LASTNAME")
     private String lastname;
 
@@ -36,10 +38,12 @@ public class Customer {
     @Column(name = "ADDRESS")
     private String address;
 
+    //@NotBlank(message = "RUC is mandatory")
     @Size(min = 11, max = 11)
     @Column(name = "RUC", unique = true)
     private String ruc;
 
+    //@NotBlank(message = "Business name is mandatory")
     @Column(name = "BUSINESS_NAME")
     private String businessName;
 
@@ -50,4 +54,14 @@ public class Customer {
     @Positive(message = "Salary must be greater than 0")
     @Column(name = "SALARY")
     private BigDecimal salary;
+
+    @AssertTrue(message = "Name and Last name should be empty for a business customer")
+    public boolean isNameAndLastnameEmptyForBusinessCustomer(){
+        return !"negocio".equals(customerType) || (name == null && lastname == null);
+    }
+
+    @AssertTrue(message = "RUC and Business name should be empty for a person customer")
+    public boolean isRucAndBusinessNameEmptyForPersonCustomer(){
+        return !"persona".equals(customerType) || (ruc == null && businessName == null);
+    }
 }

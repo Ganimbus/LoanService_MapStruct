@@ -8,6 +8,6 @@ import java.util.Optional;
 public interface ApplicationService {
     List<ApplicationDTO> getAllApplications();
     Optional<ApplicationDTO> getApplicationById(Long applicationId);
-    ApplicationDTO createOrUpdateApplication(ApplicationDTO applicationDTO);
+    ApplicationDTO createApplication(ApplicationDTO applicationDTO);
     void deleteApplication(Long applicationId);
 }

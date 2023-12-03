@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "BLACK_LIST")
-public class BlackList {
+public class Blacklist {
     @Id
     @Column(name = "DNI")
     private String dni;

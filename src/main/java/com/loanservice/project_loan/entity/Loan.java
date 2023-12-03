@@ -38,7 +38,7 @@ public class Loan {
     @Column(name = "INTEREST_RATE")
     private BigDecimal interestRate;
 
-    @Pattern(regexp = "^(simple|compound)$", message = "Interest type must be simple or compound")
+    @Pattern(regexp = "^(simple|compuesto)$", message = "Interest type must be simple or compound")
     @Column(name = "INTEREST_TYPE")
     private String interestType;
 

@@ -33,7 +33,7 @@ public class ApplicationController {
 
     @PostMapping("/add")
     public ResponseEntity<ApplicationDTO> createApplication(@RequestBody ApplicationDTO applicationDTO) {
-        ApplicationDTO savedApplication = applicationService.createOrUpdateApplication(applicationDTO);
+        ApplicationDTO savedApplication = applicationService.createApplication(applicationDTO);
         return new ResponseEntity<>(savedApplication, HttpStatus.CREATED);
     }
 

@@ -1,10 +1,8 @@
 package com.loanservice.project_loan.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -22,13 +20,14 @@ public class Application {
     private Long applicationId;
 
     @ManyToOne
-    @JoinColumn(name = "EMPLOYEE_ID")
+    @JoinColumn(name = "EMPLOYEE_ID", nullable = false)
     private Employee employee;
 
     @ManyToOne
-    @JoinColumn(name = "CUSTOMER_ID")
+    @JoinColumn(name = "CUSTOMER_ID", nullable = false)
     private Customer customer;
 
+    @Positive(message = "Amount must be greater than 0")
     @Column(name = "AMOUNT")
     private BigDecimal amount;
 
