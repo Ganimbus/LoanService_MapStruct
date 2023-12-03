@@ -33,7 +33,7 @@ public class LoanController {
 
     @PostMapping("/add")
     public ResponseEntity<LoanDTO> createLoan(@RequestBody LoanDTO loanDTO) {
-        LoanDTO savedLoan = loanService.createOrUpdateLoan(loanDTO);
+        LoanDTO savedLoan = loanService.createLoan(loanDTO);
         return new ResponseEntity<>(savedLoan, HttpStatus.CREATED);
     }
 

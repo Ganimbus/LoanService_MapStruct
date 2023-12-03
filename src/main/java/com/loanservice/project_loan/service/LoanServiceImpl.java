@@ -32,7 +32,7 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
-    public LoanDTO createOrUpdateLoan(LoanDTO loanDTO) {
+    public LoanDTO createLoan(LoanDTO loanDTO) {
         Loan savedLoan = loanRepository.save(loanMapper.loanDtoToLoan(loanDTO));
         return loanMapper.loanToLoanDto(savedLoan);
     }

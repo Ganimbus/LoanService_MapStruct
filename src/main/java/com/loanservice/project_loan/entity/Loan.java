@@ -48,5 +48,4 @@ public class Loan {
 
     @Column(name = "START_DATE")
     private Date startDate;
-
 }

@@ -8,6 +8,6 @@ import java.util.Optional;
 public interface LoanService {
     List<LoanDTO> getAllLoans();
     Optional<LoanDTO> getLoanById(Long loanId);
-    LoanDTO createOrUpdateLoan(LoanDTO loanDTO);
+    LoanDTO createLoan(LoanDTO loanDTO);
     void deleteLoan(Long loanId);
 }
