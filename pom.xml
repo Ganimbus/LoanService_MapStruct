@@ -19,6 +19,9 @@
 		<org.projectlombok.version>1.18.30</org.projectlombok.version>
 		<org.lombok-mapstruct-binding>0.2.0</org.lombok-mapstruct-binding>
 		<spring-web.version>6.1.1</spring-web.version>
+		<springfox-boot-starter.version>3.0.0</springfox-boot-starter.version>
+		<springfox-swagger-ui.version>3.0.0</springfox-swagger-ui.version>
+		<jakarta.servlet-api.version>6.0.0</jakarta.servlet-api.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -50,6 +53,18 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<version>${jakarta.servlet-api.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>4.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
@@ -58,6 +73,26 @@
 			<artifactId>lombok</artifactId>
 			<scope>provided</scope>
 			<version>${org.projectlombok.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>${springfox-swagger-ui.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-boot-starter</artifactId>
+			<version>${springfox-boot-starter.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-core</artifactId>
+			<version>2.2.19</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
