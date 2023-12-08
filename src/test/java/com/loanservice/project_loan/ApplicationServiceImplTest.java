@@ -46,7 +46,9 @@ public class ApplicationServiceImplTest {
         // Arrange
         ApplicationDTO applicationDTO = new ApplicationDTO();
         applicationDTO.setCustomerId(1L);
+        applicationDTO.setEmployeeId(1L);
         applicationDTO.setAmount(new BigDecimal(5000));
+        applicationDTO.setState("aprobado");
 
         CustomerDTO customerDTO = new CustomerDTO();
         customerDTO.setDni("12345678");

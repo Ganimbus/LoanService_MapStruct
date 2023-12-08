@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -47,8 +48,10 @@ public class LoanServiceImplTest {
         // Arrange
         LoanDTO loanDTO = new LoanDTO();
         loanDTO.setApplicationId(1L);
+        loanDTO.setCustomerId(1L);
         loanDTO.setFrequency("mensual");
         loanDTO.setInterestRate(new BigDecimal("0.1"));
+        loanDTO.setAmount(new BigDecimal("10000"));
         loanDTO.setInterestType("simple");
         loanDTO.setInstalment(12);
         loanDTO.setStartDate(null);
@@ -57,7 +60,11 @@ public class LoanServiceImplTest {
         customerDTO.setCustomerId(1L);
         customerDTO.setCustomerType("persona");
 
-        when(applicationService.getApplicationById(1L)).thenReturn(Optional.of(new ApplicationDTO()));
+        ApplicationDTO applicationDTO = new ApplicationDTO();
+        applicationDTO.setApplicationId(1L);
+        applicationDTO.setState("aprobado");
+
+        when(applicationService.getApplicationById(1L)).thenReturn(Optional.of(applicationDTO));
         when(customerService.getCustomerById(1L)).thenReturn(Optional.of(customerDTO));
         when(loanRepository.save(any())).thenReturn(new Loan());
         when(loanMapper.loanToLoanDto(any())).thenReturn(loanDTO);
@@ -73,5 +80,32 @@ public class LoanServiceImplTest {
         verify(loanMapper).loanToLoanDto(any());
     }
 
+    @Test
+    public void testCreateLoanWithNotApprovedApplication(){
+        //Arrange
+        LoanDTO loanDTO = new LoanDTO();
+        loanDTO.setApplicationId(1L);
+        loanDTO.setCustomerId(1L);
+        loanDTO.setFrequency("mensual");
+        loanDTO.setInterestRate(new BigDecimal("0.1"));
+        loanDTO.setInterestType("simple");
+        loanDTO.setInstalment(12);
+        loanDTO.setStartDate(null);
 
+        CustomerDTO customerDTO = new CustomerDTO();
+        customerDTO.setCustomerId(1L);
+        customerDTO.setCustomerType("persona");
+
+        ApplicationDTO applicationDTO = new ApplicationDTO();
+        applicationDTO.setState("rechazado");
+
+        when(applicationService.getApplicationById(1L)).thenReturn(Optional.of(applicationDTO));
+        when(customerService.getCustomerById(1L)).thenReturn(Optional.of(customerDTO));
+
+        //Act and Assert
+        assertThrows(RuntimeException.class, () -> loanService.createLoan(loanDTO));
+
+        verify(applicationService).getApplicationById(1L);
+        verify(customerService).getCustomerById(1L);
+    }
 }
