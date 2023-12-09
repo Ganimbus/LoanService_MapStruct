@@ -58,6 +58,7 @@ public class LoanServiceImpl implements LoanService {
             throw new RuntimeException("Application is not approved");
         }
 
+        loanDTO.setAmount(applicationDTO.getAmount());
         String frequency = loanDTO.getFrequency();
         String customerType = customerDTO.getCustomerType();
         //Check interest type and rate based on customer type
@@ -91,63 +92,69 @@ public class LoanServiceImpl implements LoanService {
         calendar.setTime(loanDTO.getStartDate());
 
         BigDecimal paymentAmount;
-        for (int i = 0; i < loanDTO.getInstalment(); i++) {
-            if ("mensual".equals(loanDTO.getFrequency())){
-                calendar.add(Calendar.MONTH, 1);
-            } else if ("trimestral".equals(loanDTO.getFrequency())){
-                calendar.add(Calendar.MONTH, 3);
-            }
             if ("simple".equals(loanDTO.getInterestType())){
-                paymentAmount = calculateSimpleInterestPayment(loanDTO.getAmount(), loanDTO.getInterestRate(), i + 1);
+                paymentAmount = calculateSimpleInterestPayment(loanDTO.getAmount(),
+                        loanDTO.getInterestRate(),
+                        loanDTO.getInstalment());
             } else {
-                paymentAmount = calculateCompoundInterestPayment(loanDTO.getAmount(), loanDTO.getInterestRate(), i + 1);
+                paymentAmount = calculateCompoundInterestPayment(loanDTO.getAmount(),
+                        loanDTO.getInterestRate(),
+                        loanDTO.getInstalment());
             }
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             String paymentDate = sdf.format(calendar.getTime());
             paymentDates_Amount.add(paymentDate + "-" + paymentAmount);
-        }
 
+            for (int i = 1; i < loanDTO.getInstalment(); i++) {
+                if ("mensual".equals(loanDTO.getFrequency())){
+                    calendar.add(Calendar.MONTH, 1);
+                } else if ("trimestral".equals(loanDTO.getFrequency())){
+                    calendar.add(Calendar.MONTH, 3);
+                }
+                paymentDate = sdf.format(calendar.getTime());
+                paymentDates_Amount.add(paymentDate + "-" + paymentAmount);
+            }
         return new PaymentScheduleDTO(loanId, loanDTO.getCustomerId(), paymentDates_Amount);
     }
 
     private BigDecimal calculateSimpleInterestPayment(BigDecimal principal, BigDecimal interestRate, int period){
-        BigDecimal interest = principal.multiply(interestRate).multiply(BigDecimal.valueOf(period));
-        return principal.add(interest).divide(BigDecimal.valueOf(period), RoundingMode.HALF_UP);
+        BigDecimal interest = principal.multiply(interestRate);
+        return principal.divide(BigDecimal.valueOf(period), RoundingMode.HALF_UP).add(interest).setScale(2, RoundingMode.HALF_UP);
     }
 
     private BigDecimal calculateCompoundInterestPayment(BigDecimal principal, BigDecimal interestRate, int period){
         BigDecimal compoundFactor = BigDecimal.ONE.add(interestRate).pow(period);
-        return principal.multiply(compoundFactor).divide(BigDecimal.valueOf(period), RoundingMode.HALF_UP);
+        return principal.multiply(compoundFactor).divide(BigDecimal.valueOf(period), RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP);
     }
 
     private void validateInterestTypeAndRate(String customerType, String interestType, BigDecimal interestRate, String frequency) {
         //Check interest type and rate based on customer type
         if ("persona".equals(customerType)) {
             if (!"simple".equals(interestType) ||
-                    interestRate.compareTo(BigDecimal.valueOf(0.1)) < 0 ||
-                    interestRate.compareTo(BigDecimal.valueOf(0.15)) > 0) {
+                    interestRate.compareTo(BigDecimal.valueOf(0.016)) < 0 ||
+                    interestRate.compareTo(BigDecimal.valueOf(0.036)) > 0) {
                 throw new RuntimeException("Persona customers can only have simple interest between 10% and 15%");
             }
         } else if ("negocio".equals(customerType)) {
             //Check interest rate based on interest type
             if ("simple".equals(interestType)) {
-                if (interestRate.compareTo(BigDecimal.valueOf(0.1)) < 0 &&
-                        interestRate.compareTo(BigDecimal.valueOf(0.12)) > 0) {
+                if (interestRate.compareTo(BigDecimal.valueOf(0.01)) < 0 &&
+                        interestRate.compareTo(BigDecimal.valueOf(0.04)) > 0) {
                     throw new RuntimeException("Negocio customers can only have simple interest between 10% and 12%");
                 }
             } else if ("compuesto".equals(interestType)) {
                 //Check interest rate based on frequency
                 //Calculate equivalent interest rate for mensual frequency
                 if ("mensual".equals(frequency)){
-                    if (interestRate.compareTo(BigDecimal.valueOf(0.07)) < 0 &&
-                            interestRate.compareTo(BigDecimal.valueOf(0.1)) > 0) {
+                    if (interestRate.compareTo(BigDecimal.valueOf(0.008)) < 0 &&
+                            interestRate.compareTo(BigDecimal.valueOf(0.04)) > 0) {
                         throw new RuntimeException("Negocio customers can only have compuesto interest between 7% and 10% with mensual frequency");
                     }
                 } else if ("trimestral".equals(frequency)) {
                     //Calculate equivalent interest rate for trimestral frequency
-                    if (interestRate.compareTo(BigDecimal.valueOf(0.20)) < 0 &&
-                            interestRate.compareTo(BigDecimal.valueOf(0.3)) > 0) {
+                    if (interestRate.compareTo(BigDecimal.valueOf(0.03)) < 0 &&
+                            interestRate.compareTo(BigDecimal.valueOf(0.15)) > 0) {
                         throw new RuntimeException("Negocio customers can only have compuesto interest between 20% and 30% with trimestral frequency");
                     }
                 }
