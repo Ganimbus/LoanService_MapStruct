@@ -66,7 +66,7 @@ To execute the project, consider the following:
 - Database connection configuration is in the application.properties file.
 - The default port is 8080.
 - Postman is used for GET, POST, DELETE, etc. requests.
-- For the Swagger interface after project execution, follow this [link](localhost:8080/swagger-ui/index.html#/).
+- For the Swagger interface after project execution, follow this [link](http://localhost:8080/swagger-ui/index.html#/).
 
 ## Usage
 
