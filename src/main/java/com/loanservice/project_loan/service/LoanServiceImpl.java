@@ -3,6 +3,7 @@ package com.loanservice.project_loan.service;
 import com.loanservice.project_loan.dto.ApplicationDTO;
 import com.loanservice.project_loan.dto.CustomerDTO;
 import com.loanservice.project_loan.dto.LoanDTO;
+import com.loanservice.project_loan.dto.PaymentScheduleDTO;
 import com.loanservice.project_loan.entity.Loan;
 import com.loanservice.project_loan.mapper.LoanMapper;
 import com.loanservice.project_loan.repository.LoanRepository;
@@ -10,8 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class LoanServiceImpl implements LoanService {
@@ -74,6 +76,49 @@ public class LoanServiceImpl implements LoanService {
     @Override
     public void deleteLoan(Long loanId) {
         loanRepository.deleteById(loanId);
+    }
+
+    @Override
+    public PaymentScheduleDTO getPaymentSchedule(Long loanId){
+        Optional<LoanDTO> optionalLoanDTO = getLoanById(loanId);
+        if (optionalLoanDTO.isEmpty()){
+            throw new RuntimeException("Loan not found");
+        }
+
+        LoanDTO loanDTO = optionalLoanDTO.get();
+        List<String> paymentDates_Amount = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(loanDTO.getStartDate());
+
+        BigDecimal paymentAmount;
+        for (int i = 0; i < loanDTO.getInstalment(); i++) {
+            if ("mensual".equals(loanDTO.getFrequency())){
+                calendar.add(Calendar.MONTH, 1);
+            } else if ("trimestral".equals(loanDTO.getFrequency())){
+                calendar.add(Calendar.MONTH, 3);
+            }
+            if ("simple".equals(loanDTO.getInterestType())){
+                paymentAmount = calculateSimpleInterestPayment(loanDTO.getAmount(), loanDTO.getInterestRate(), i + 1);
+            } else {
+                paymentAmount = calculateCompoundInterestPayment(loanDTO.getAmount(), loanDTO.getInterestRate(), i + 1);
+            }
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            String paymentDate = sdf.format(calendar.getTime());
+            paymentDates_Amount.add(paymentDate + "-" + paymentAmount);
+        }
+
+        return new PaymentScheduleDTO(loanId, loanDTO.getCustomerId(), paymentDates_Amount);
+    }
+
+    private BigDecimal calculateSimpleInterestPayment(BigDecimal principal, BigDecimal interestRate, int period){
+        BigDecimal interest = principal.multiply(interestRate).multiply(BigDecimal.valueOf(period));
+        return principal.add(interest).divide(BigDecimal.valueOf(period), RoundingMode.HALF_UP);
+    }
+
+    private BigDecimal calculateCompoundInterestPayment(BigDecimal principal, BigDecimal interestRate, int period){
+        BigDecimal compoundFactor = BigDecimal.ONE.add(interestRate).pow(period);
+        return principal.multiply(compoundFactor).divide(BigDecimal.valueOf(period), RoundingMode.HALF_UP);
     }
 
     private void validateInterestTypeAndRate(String customerType, String interestType, BigDecimal interestRate, String frequency) {

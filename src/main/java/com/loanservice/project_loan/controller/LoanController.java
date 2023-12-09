@@ -1,6 +1,7 @@
 package com.loanservice.project_loan.controller;
 
 import com.loanservice.project_loan.dto.LoanDTO;
+import com.loanservice.project_loan.dto.PaymentScheduleDTO;
 import com.loanservice.project_loan.service.LoanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,12 @@ public class LoanController {
     public ResponseEntity<LoanDTO> getLoanById(@PathVariable Long loanId) {
         Optional<LoanDTO> loanDTO = loanService.getLoanById(loanId);
         return loanDTO.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{loanId}/payment-schedule")
+    public ResponseEntity<Object> getPaymentSchedule(@PathVariable Long loanId) {
+        PaymentScheduleDTO paymentScheduleDTO = loanService.getPaymentSchedule(loanId);
+        return ResponseEntity.ok(paymentScheduleDTO);
     }
 
     @PostMapping("/add")
