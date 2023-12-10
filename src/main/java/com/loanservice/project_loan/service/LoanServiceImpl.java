@@ -139,9 +139,16 @@ public class LoanServiceImpl implements LoanService {
         } else if ("negocio".equals(customerType)) {
             //Check interest rate based on interest type
             if ("simple".equals(interestType)) {
-                if (interestRate.compareTo(BigDecimal.valueOf(0.01)) < 0 &&
-                        interestRate.compareTo(BigDecimal.valueOf(0.04)) > 0) {
-                    throw new RuntimeException("Negocio customers can only have simple interest between 10% and 12%");
+                if ("mensual".equals(frequency)) {
+                    if (interestRate.compareTo(BigDecimal.valueOf(0.01)) < 0 ||
+                            interestRate.compareTo(BigDecimal.valueOf(0.04)) > 0) {
+                        throw new RuntimeException("Negocio customers can only have simple interest between 1% and 4% with mensual frequency");
+                    }
+                } else if ("trimestral".equals(frequency)) {
+                    if (interestRate.compareTo(BigDecimal.valueOf(0.03)) < 0 ||
+                            interestRate.compareTo(BigDecimal.valueOf(0.15)) > 0) {
+                        throw new RuntimeException("Negocio customers can only have simple interest between 3% and 15% with trimestral frequency");
+                    }
                 }
             } else if ("compuesto".equals(interestType)) {
                 //Check interest rate based on frequency
@@ -149,13 +156,13 @@ public class LoanServiceImpl implements LoanService {
                 if ("mensual".equals(frequency)){
                     if (interestRate.compareTo(BigDecimal.valueOf(0.008)) < 0 &&
                             interestRate.compareTo(BigDecimal.valueOf(0.04)) > 0) {
-                        throw new RuntimeException("Negocio customers can only have compuesto interest between 7% and 10% with mensual frequency");
+                        throw new RuntimeException("Negocio customers can only have compuesto interest between 0.8% and 4% with mensual frequency");
                     }
                 } else if ("trimestral".equals(frequency)) {
                     //Calculate equivalent interest rate for trimestral frequency
-                    if (interestRate.compareTo(BigDecimal.valueOf(0.03)) < 0 &&
-                            interestRate.compareTo(BigDecimal.valueOf(0.15)) > 0) {
-                        throw new RuntimeException("Negocio customers can only have compuesto interest between 20% and 30% with trimestral frequency");
+                    if (interestRate.compareTo(BigDecimal.valueOf(0.04)) < 0 &&
+                            interestRate.compareTo(BigDecimal.valueOf(0.18)) > 0) {
+                        throw new RuntimeException("Negocio customers can only have compuesto interest between 4% and 18% with trimestral frequency");
                     }
                 }
             }
@@ -164,7 +171,7 @@ public class LoanServiceImpl implements LoanService {
 
     private void validateFrequencyAndInstalment(String customerType, String frequency, int instalment) {
         if ("persona".equals(customerType)) {
-            if (!"mensual".equals(frequency) || instalment < 3 || instalment > 36) {
+            if (!"mensual".equals(frequency) || instalment < 3 || instalment > 60) {
                 throw new RuntimeException("Invalid frequency or instalment for persona");
             }
         }else if ("negocio".equals(customerType)) {
