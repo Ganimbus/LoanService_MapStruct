@@ -134,7 +134,7 @@ public class LoanServiceImpl implements LoanService {
             if (!"simple".equals(interestType) ||
                     interestRate.compareTo(BigDecimal.valueOf(0.016)) < 0 ||
                     interestRate.compareTo(BigDecimal.valueOf(0.036)) > 0) {
-                throw new RuntimeException("Persona customers can only have simple interest between 10% and 15%");
+                throw new RuntimeException("Persona customers can only have simple interest between 1.6% and 3.6%");
             }
         } else if ("negocio".equals(customerType)) {
             //Check interest rate based on interest type
