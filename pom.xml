@@ -18,7 +18,7 @@
 		<org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
 		<org.projectlombok.version>1.18.30</org.projectlombok.version>
 		<org.lombok-mapstruct-binding>0.2.0</org.lombok-mapstruct-binding>
-		<spring-web.version>6.1.1</spring-web.version>
+		<spring-web.version>6.1.2</spring-web.version>
 		<springfox-boot-starter.version>3.0.0</springfox-boot-starter.version>
 		<springfox-swagger-ui.version>3.0.0</springfox-swagger-ui.version>
 		<jakarta.servlet-api.version>6.0.0</jakarta.servlet-api.version>
